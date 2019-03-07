@@ -9,46 +9,33 @@ def bubbleSort(arr):
         for y in range(x):
             if arr[y+1] < arr[y]:
                 arr[y+1], arr[y] = arr[y], arr[y+1]
-                print(' '.join(str(v) for v in arr))
+                print(*arr)
 
 
 def insertSort(arr):
-    n = len(arr)
-    for x in range(1, n):
-        temp = arr[x]
-        count = x - 1
-        swap = False
-        while count >= 0 and temp < arr[count]:
-            swap = True
-            arr[count+1] = arr[count]
-            count -= 1
-        if swap:
-            print(' '.join(str(v) for v in arr))
-        arr[count+1] = temp
+    for i in range(1, len(arr)):
+        if arr[i] < max(arr[:i]):
+            for j in range(i):
+                if arr[j] > arr[i]:
+                    arr[i], arr[j] = arr[j], arr[i]
+            print(*arr)
 
 
 def quickSort(arr, left, right):
-    if left == right:
-        return
-    pivot = arr[int((left + right) / 2)]
-    i, j = left, right
-
-    while i <= j:
-        while arr[i] < pivot:
-            i += 1
-        while arr[j] > pivot:
-            j -= 1
-        if i <= j:
-            arr[i], arr[j] = arr[j], arr[i]
-            i += 1
-            j -= 1
-    print('P: {}'.format(pivot))
-    print(' '.join(str(v) for v in arr))
-    if left < j:
-        quickSort(arr, left, j)
-    if right > i:
+    if left < right:
+        i, j, pivot = left, right, arr[left]
+        while i <= j:
+            if arr[i] > pivot > arr[j]:
+                arr[i], arr[j] = arr[j], arr[i]
+            if arr[i] <= pivot:
+                i += 1
+            elif arr[i] > pivot and arr[j] >= pivot:
+                j -= 1
+        arr[left], arr[i - 1] = arr[i - 1], arr[left]
+        print('P:', pivot)
+        print(*arr)
+        quickSort(arr, left, i - 2)
         quickSort(arr, i, right)
-    return True
 
 
 def mergeSort(arr):
@@ -79,7 +66,7 @@ def mergeSort(arr):
             arr[k] = right[j]
             j = j+1
             k = k+1
-        print(' '.join(str(v) for v in arr))
+        print(*arr)
 
 
 def main(algor, arr):

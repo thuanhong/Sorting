@@ -3,12 +3,13 @@
 import argparse
 
 
-def bubbleSort(arr):
+def bubbleSort(arr, file):
     n = len(arr)
     for x in range(n-1, -1, -1):
         for y in range(x):
             if arr[y+1] < arr[y]:
                 arr[y+1], arr[y] = arr[y], arr[y+1]
+                file.write(' '.join(str(v) for v in arr) + '\n')
                 print(*arr)
 
 
@@ -69,7 +70,7 @@ def mergeSort(arr):
         print(*arr)
 
 
-def main(algor, arr):
+def main(algor, arr, file):
     if algor == 'insert':
         insertSort(arr)
     elif algor == 'quick':
@@ -77,7 +78,7 @@ def main(algor, arr):
     elif algor == 'merge':
         mergeSort(arr)
     else:
-        bubbleSort(arr)
+        bubbleSort(arr, file)
 
 
 if __name__ == '__main__':
@@ -89,7 +90,7 @@ if __name__ == '__main__':
                         help='visualise the algorithm in GUI mode')
     parser.add_argument('N', nargs='+', type=int,
                         help='an integer for the list to sort')
-
+    f = open('data', 'w')
     args = parser.parse_args()
     if args.gui:
         if len(args.N) > 15:
@@ -98,6 +99,7 @@ if __name__ == '__main__':
             pass
     else:
         if args.algo:
-            main(args.algo, args.N)
+            main(args.algo, args.N, f)
         else:
-            bubbleSort(args.N)
+            bubbleSort(args.N, f)
+    f.close()

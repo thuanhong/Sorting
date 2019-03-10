@@ -17,14 +17,15 @@ def bubbleSort(arr, file):
 def insertSort(arr, file):
     file.write(' '.join(str(v) for v in arr) + '\n')
     for i in range(1, len(arr)):
-        if arr[i] < max(arr[:i]):
-            for j in range(i):
-                if arr[j] > arr[i]:
-                    arr[i], arr[j] = arr[j], arr[i]
-                    file.write(str(j) + ' ')
-            file.write(str(i) + '\n')
-            print(*arr)
+        j, swapped = i, False
+        while j > 0 and arr[j - 1] > arr[j]:
+            arr[j], arr[j - 1] = arr[j - 1], arr[j]
+            j, swapped = j - 1, True
+            file.write(str(j) + ' ')
 
+        if swapped:
+            print(*arr)
+            file.write('\n')
 
 def quickSort(arr, left, right):
     if left < right:
@@ -85,25 +86,33 @@ def main(algor, arr, file):
         bubbleSort(arr, file)
 
 
-if __name__ == '__main__':
+def take_arugment():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--algo', type=str,
+    parser.add_argument('--algo', type=str, nargs='?', metavar='ALGO', default='bubble',
                         help='specify which algorithm to use for sorting among\
                         [bubble|insert|quick|merge], default bubble')
     parser.add_argument('--gui', action='store_true',
                         help='visualise the algorithm in GUI mode')
     parser.add_argument('N', nargs='+', type=int,
                         help='an integer for the list to sort')
-    f = open('data', 'w')
     args = parser.parse_args()
+
+    return args
+
+
+if __name__ == '__main__':
+    args = take_arugment()
+    f = open('data', 'w')
+
+    if args.algo:
+        main(args.algo, args.N, f)
+    else:
+        bubbleSort(args.N, f)
+    f.close()
+
     if args.gui:
         if len(args.N) > 15:
             print('Input too large')
         else:
-            pass
-    else:
-        if args.algo:
-            main(args.algo, args.N, f)
-        else:
-            bubbleSort(args.N, f)
-    f.close()
+            from graphic import main
+            main()

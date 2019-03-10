@@ -1,13 +1,11 @@
 import pyglet
 from pyglet.window import mouse
-import math
 
 
 def take_data():
 
     f = open('data', 'r')  # take data to handle from data file
     list_data = f.read().split('\n')[:-1]
-
     list_draw = []
     for index, number in enumerate(list_data[0].split(' ')):
         list_draw.append(pyglet.text.Label(number, font_size = 20, x=100*(index+1), y=360))
@@ -15,11 +13,10 @@ def take_data():
     list_redo = []
     for line in list_data[1:]:
         temp = []
-        for y in line.split(' '):
+        for y in line.rstrip().split(' '):
             temp.append(int(y))
-        list_redo.append(temp)
+        list_redo.append(sorted(temp))
     f.close()
-
     return list_redo, list_draw
 
 class gameWindow(pyglet.window.Window):
@@ -85,7 +82,11 @@ class gameWindow(pyglet.window.Window):
         # self.update_bubble(dt)
         self.update_insert_bubble(dt)
 
-if __name__ == '__main__':
+
+def main():
     game = gameWindow(1280, 720, 'Simulator Sort')
     pyglet.clock.schedule_interval(game.update, game.frame_rate)
     pyglet.app.run()
+
+if __name__ == '__main__':
+    main()

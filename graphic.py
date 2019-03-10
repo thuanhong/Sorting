@@ -39,9 +39,11 @@ class gameWindow(pyglet.window.Window):
         self.frame_rate = 1/60.0
 
         self.list_redo, self.list_draw = take_data()
-        self.list_redo.insert(0, self.list_redo[0].reverse())
+        self.cor_cur = self.list_redo[0][::-1]
+        self.list_redo.insert(0, self.cor_cur)
         self.len = len(self.list_redo) - 1
-        self.cor_cur = self.list_redo[0]
+        print(self.cor_cur)
+
 
         self.count = 0
         self.wait = False
@@ -96,7 +98,7 @@ class gameWindow(pyglet.window.Window):
                     self.list_draw[x].num.x += 2
 
     def update(self, dt):
-        # self.current.text = str(self.count)
+        self.current.text = str(self.count)
         # self.update_bubble(dt)
         self.update_insert(dt)
 

@@ -1,15 +1,6 @@
 import pyglet
-from pyglet.window import mouse, key
-from sorting_deck import *
+from pyglet.window import mouse
 import math
-
-
-class num:
-    def __init__(self, value, posx, posy):
-        self.num = pyglet.text.Label(value, font_size = 20,x = posx,y = posy)
-
-    def draw(self):
-        self.num.draw()
 
 
 def take_data():
@@ -19,16 +10,14 @@ def take_data():
 
     list_draw = []
     for index, number in enumerate(list_data[0].split(' ')):
-        list_draw.append(num(number, 100*(index+1), 360))
+        list_draw.append(pyglet.text.Label(number, font_size = 20, x=100*(index+1), y=360))
 
     list_redo = []
-    # list_undo = []
     for line in list_data[1:]:
         temp = []
         for y in line.split(' '):
             temp.append(int(y))
         list_redo.append(temp)
-        # list_undo.append([int(line[2]), int(line[0])])
     f.close()
 
     return list_redo, list_draw
@@ -41,9 +30,6 @@ class gameWindow(pyglet.window.Window):
         self.list_redo, self.list_draw = take_data()
         self.cor_cur = self.list_redo[0][::-1]
         self.list_redo.insert(0, self.cor_cur)
-        self.len = len(self.list_redo) - 1
-        print(self.cor_cur)
-
 
         self.count = 0
         self.wait = False
@@ -71,36 +57,33 @@ class gameWindow(pyglet.window.Window):
             self.sorted.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
-        if button == mouse.LEFT and self.count < self.len and not self.wait:
+        if button == mouse.LEFT and self.count < len(self.list_redo) - 1 and not self.wait:
             self.count += 1
-    #     # elif button == mouse.RIGHT and self.count > 0 and not self.wait:
-    #     #     self.count -= 1
-    #
-    # def update_bubble(self, dt):
-    #     if self.cor_cur != self.list_redo[self.count]:
-    #         self.wait = True
-    #         index = self.list_redo[self.count][0]
-    #         temp = self.list_redo[self.count][1]
-    #         if self.list_draw[index].num.x != 100*(temp+1):
-    #             self.list_draw[index].num.x += 2
-    #             self.list_draw[temp].num.x -= 2
-    #         else:
-    #             self.cor_cur = self.list_redo[self.count]
-    #             self.wait = False
-    #             self.list_draw[index].num.x, self.list_draw[temp].num.x = self.list_draw[temp].num.x, self.list_draw[index].num.x
-    #             self.list_draw[index].num.text, self.list_draw[temp].num.text = self.list_draw[temp].num.text, self.list_draw[index].num.text
+        # elif button == mouse.RIGHT and self.count > 0 and not self.wait:
+        #     self.count -= 1
 
-    def update_insert(self, dt):
+    def update_insert_bubble(self, dt):
         if self.cor_cur != self.list_redo[self.count]:
             self.wait = True
-            for x in self.list_redo[self.count][:-1]:
-                if self.list_draw[x].num.x != 100*(x+1+1):
-                    self.list_draw[x].num.x += 2
+            index = self.list_redo[self.count][-1]
+            temp = self.list_redo[self.count][0]
+            if self.list_draw[index].x != 100*(temp+1):
+                for x in self.list_redo[self.count][:-1]:
+                    self.list_draw[x].x += 1
+                self.list_draw[index].x -= len(self.list_redo[self.count][:-1])
+
+            else:
+                self.cor_cur = self.list_redo[self.count]
+                for z in range(temp, index):
+                    self.list_draw[index].x, self.list_draw[z].x = self.list_draw[z].x, self.list_draw[index].x
+                    self.list_draw[index].text, self.list_draw[z].text = self.list_draw[z].text, self.list_draw[index].text
+                self.wait = False
+
 
     def update(self, dt):
         self.current.text = str(self.count)
         # self.update_bubble(dt)
-        self.update_insert(dt)
+        self.update_insert_bubble(dt)
 
 if __name__ == '__main__':
     game = gameWindow(1280, 720, 'Simulator Sort')

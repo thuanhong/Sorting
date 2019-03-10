@@ -1,7 +1,5 @@
 import math
-z = 200
+z = [1,2,3,4,5,6,7]
 y = 500
-while z <= 300:
-    y += math.sin((z%(500/250))*math.pi)
-    z += 1
-    print(z, y)
+for x in z[:-1]:
+    print(x)

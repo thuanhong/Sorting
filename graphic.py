@@ -15,7 +15,7 @@ def take_data():
         temp = []
         for y in line.rstrip().split(' '):
             temp.append(int(y))
-        list_redo.append(sorted(temp))
+        list_redo.append(sorted(list(set(temp))))
     f.close()
     return list_redo, list_draw
 
@@ -33,7 +33,7 @@ class gameWindow(pyglet.window.Window):
 
         self.sorted = pyglet.text.Label('List have been sorted',
                                         font_size = 40,x = 300,y = 200)
-        self.step = pyglet.text.Label('Step :' + '   /' + str(len(self.list_draw)+1),
+        self.step = pyglet.text.Label('Step :' + '   /' + str(len(self.list_redo)+1),
                                         font_size = 30,x = 1000,y = 600)
         self.current = pyglet.text.Label('1', font_size = 30,x = 1120,y = 600)
 

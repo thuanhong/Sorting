@@ -18,10 +18,12 @@ def insertSort(arr, file):
     file.write(' '.join(str(v) for v in arr) + '\n')
     for i in range(1, len(arr)):
         j, swapped = i, False
-        while j > 0 and arr[j - 1] > arr[j]:
+        while j >= 0 and arr[j - 1] > arr[j]:
+            file.write(str(j) + ' ')
             arr[j], arr[j - 1] = arr[j - 1], arr[j]
             j, swapped = j - 1, True
             file.write(str(j) + ' ')
+
 
         if swapped:
             print(*arr)

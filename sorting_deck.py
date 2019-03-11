@@ -24,7 +24,6 @@ def insertSort(arr, file):
             j, swapped = j - 1, True
             file.write(str(j) + ' ')
 
-
         if swapped:
             print(*arr)
             file.write('\n')
@@ -78,6 +77,10 @@ def mergeSort(arr):
 
 
 def main(algor, arr, file):
+    if algor.isdigit():
+        file.write('bubble' + '\n')
+    else:
+        file.write(algor + '\n')
     if algor == 'insert':
         insertSort(arr, file)
     elif algor == 'quick':
@@ -90,7 +93,7 @@ def main(algor, arr, file):
 
 def take_arugment():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--algo', type=str, nargs='?', metavar='ALGO', default='bubble',
+    parser.add_argument('--algo', type=str,
                         help='specify which algorithm to use for sorting among\
                         [bubble|insert|quick|merge], default bubble')
     parser.add_argument('--gui', action='store_true',
@@ -98,7 +101,6 @@ def take_arugment():
     parser.add_argument('N', nargs='+', type=int,
                         help='an integer for the list to sort')
     args = parser.parse_args()
-
     return args
 
 
@@ -109,6 +111,7 @@ if __name__ == '__main__':
     if args.algo:
         main(args.algo, args.N, f)
     else:
+        file.write('bubble' + '\n')
         bubbleSort(args.N, f)
     f.close()
 

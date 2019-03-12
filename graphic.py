@@ -17,7 +17,8 @@ def take_data(width):
         temp = []
         for y in line.rstrip().split(' '):
             temp.append(int(y))
-        list_redo.append(sorted(list(set(temp))))
+        list_redo.append(sorted(temp))
+
     f.close()
     return list_redo, list_draw, name_algo
 
@@ -39,7 +40,12 @@ class gameWindow(pyglet.window.Window):
         self.frame_rate = 1/60.0
 
         self.list_redo, self.list_draw, name = take_data(self.width)
-        self.cor_cur = self.list_redo[0][::-1]
+        if name == 'quick':
+            self.list_pivot = []
+            self.arrow_pivot = pyglet.image.load('pivot.png')
+            for x in self.list_redo:
+                self.list_pivot.append(x.pop())
+        self.cor_cur = 0
         self.list_redo.insert(0, self.cor_cur)
 
         self.count = 0
@@ -67,10 +73,12 @@ class gameWindow(pyglet.window.Window):
         if self.wait:
             for x in self.list_arrow:
                 x.Sprite.draw()
+        if self.algo.text == 'quick':
+            arrow(self.list_pivot[self.count], self.arrow_pivot).Sprite.draw()
 
         self.step.draw()
         self.current.draw()
-        if self.count == len(self.list_redo)-1:
+        if self.count == self.cor_cur == len(self.list_redo) - 1:
             self.sorted.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
@@ -78,7 +86,7 @@ class gameWindow(pyglet.window.Window):
             self.count += 1
 
     def update_insert_bubble(self, dt):
-        if self.cor_cur != self.list_redo[self.count]:
+        if self.cor_cur != self.count:
             self.wait = True
             index = self.list_redo[self.count][-1]
             temp = self.list_redo[self.count][0]
@@ -87,26 +95,27 @@ class gameWindow(pyglet.window.Window):
                 self.list_arrow[0].posx -= 1
                 self.list_arrow[0].update()
                 sleep(0.5)
-            elif self.list_draw[index].x > 100*(temp+1):
+
+            elif self.list_draw[index].x != 100*(temp+1):
                 for x in self.list_redo[self.count][:-1]:
                     self.list_draw[x].x += 1
                 self.list_draw[index].x -= len(self.list_redo[self.count][:-1])
 
             else:
-                self.cor_cur = self.list_redo[self.count]
+                self.cor_cur = self.count
                 for z in range(temp, index):
                     self.list_draw[index].x, self.list_draw[z].x = self.list_draw[z].x, self.list_draw[index].x
                     self.list_draw[index].text, self.list_draw[z].text = self.list_draw[z].text, self.list_draw[index].text
+                for x in self.list_draw:
+                    print(x.x)
                 try:
                     self.list_arrow[0].posx = self.list_redo[self.count + 1][-1]
                     self.list_arrow[1].posx = self.list_redo[self.count + 1][-1]
-                    print(self.list_redo[self.count + 1][-2], self.list_redo[self.count + 1][-1])
                     self.list_arrow[0].update()
                     self.list_arrow[1].update()
                 except:
                     pass
                 self.wait = False
-
 
     def update(self, dt):
         self.current.text = str(self.count)

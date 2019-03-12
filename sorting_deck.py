@@ -5,7 +5,6 @@ import argparse
 
 def bubbleSort(arr, file):
     n = len(arr)
-    file.write(' '.join(str(v) for v in arr) + '\n')
     for x in range(n-1, -1, -1):
         for y in range(x):
             if arr[y+1] < arr[y]:
@@ -15,34 +14,44 @@ def bubbleSort(arr, file):
 
 
 def insertSort(arr, file):
-    file.write(' '.join(str(v) for v in arr) + '\n')
     for i in range(1, len(arr)):
-        j, swapped = i, False
-        while j >= 0 and arr[j - 1] > arr[j]:
+        temp = arr[i]
+        j = i - 1
+        swapped = False
+        if temp < arr[j]:
+            file.write(str(i) + ' ')
+        while j >= 0 and temp < arr[j]:
             file.write(str(j) + ' ')
-            arr[j], arr[j - 1] = arr[j - 1], arr[j]
-            j, swapped = j - 1, True
-            file.write(str(j) + ' ')
+            arr[j+1] = arr[j]
+            swapped = True
+            j -= 1
+        arr[j+1] = temp
 
         if swapped:
             print(*arr)
             file.write('\n')
 
-def quickSort(arr, left, right):
+
+def quickSort(arr, left, right, file):
     if left < right:
-        i, j, pivot = left, right, arr[left]
-        while i <= j:
-            if arr[i] > pivot > arr[j]:
-                arr[i], arr[j] = arr[j], arr[i]
-            if arr[i] <= pivot:
+        i = (left -1)
+        pivot = arr[right]
+        for j in range(left, right):
+            if arr[j] <= pivot:
                 i += 1
-            elif arr[i] > pivot and arr[j] >= pivot:
-                j -= 1
-        arr[left], arr[i - 1] = arr[i - 1], arr[left]
+                if i == j:
+                    continue
+                arr[i], arr[j] = arr[j], arr[i]
+                file.write('{} {} {}\n'.format(i, j, right))
+
+
+        arr[i+1],arr[right] = arr[right], arr[i+1]
+        file.write('{} {} {}\n'.format(i+1, right, right))
+        pi = i+1
         print('P:', pivot)
         print(*arr)
-        quickSort(arr, left, i - 2)
-        quickSort(arr, i, right)
+        quickSort(arr, left, i, file)
+        quickSort(arr, i+2, right, file)
 
 
 def mergeSort(arr):
@@ -81,10 +90,11 @@ def main(algor, arr, file):
         file.write('bubble' + '\n')
     else:
         file.write(algor + '\n')
+    file.write(' '.join(str(v) for v in arr) + '\n')
     if algor == 'insert':
         insertSort(arr, file)
     elif algor == 'quick':
-        quickSort(arr, 0, len(arr) - 1)
+        quickSort(arr, 0, len(arr) - 1, file)
     elif algor == 'merge':
         mergeSort(arr)
     else:

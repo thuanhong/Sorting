@@ -4,8 +4,7 @@ import argparse
 
 
 def bubbleSort(arr, file):
-    n = len(arr)
-    for x in range(n-1, -1, -1):
+    for x in range(len(arr)-1, -1, -1):
         for y in range(x):
             if arr[y+1] < arr[y]:
                 arr[y+1], arr[y] = arr[y], arr[y+1]
@@ -122,7 +121,8 @@ if __name__ == '__main__':
     if args.algo:
         main(args.algo, args.N, f)
     else:
-        file.write('bubble' + '\n')
+        f.write('bubble' + '\n')
+        f.write(' '.join(str(v) for v in args.N) + '\n')
         bubbleSort(args.N, f)
     f.close()
 

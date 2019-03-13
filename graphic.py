@@ -24,7 +24,6 @@ def take_data(width):
     f.close()
     return list_redo, list_draw, name_algo
 
-
 class arrow:
     def __init__(self, posx, image):
         self.Sprite = pyglet.sprite.Sprite(image)
@@ -47,7 +46,7 @@ class gameWindow(pyglet.window.Window):
             self.arrow_pivot = pyglet.image.load('pivot.png')
             for x in self.list_redo:
                 self.list_pivot.append(x.pop())
-        self.list_pivot.insert(0, 9)
+            self.list_pivot.insert(0, 9)
 
         self.cor_cur = 0
         self.list_redo.insert(0, self.cor_cur)
@@ -57,7 +56,7 @@ class gameWindow(pyglet.window.Window):
 
         self.sorted = pyglet.text.Label('List have been sorted',
                                         font_size = 40,x = 300,y = 200)
-        self.step = pyglet.text.Label('Step :' + '   /' + str(len(self.list_redo) - 1),
+        self.step = pyglet.text.Label('Step :' + '    /' + str(len(self.list_redo) - 1),
                                         font_size = 30,x = 1000,y = 600)
         self.current = pyglet.text.Label('1', font_size = 30,x = 1120,y = 600)
         self.algo = pyglet.text.Label(name, font_size = 30,x = 580,y = 600)
@@ -90,6 +89,30 @@ class gameWindow(pyglet.window.Window):
         if button == mouse.LEFT and self.count < len(self.list_redo) - 1 and not self.wait:
             self.count += 1
 
+    def move_pos_arrow(self, step):
+        self.list_arrow[0].posx += step
+        self.list_arrow[0].update()
+        sleep(0.5)
+
+    def move_number(self, start, end, index, step1, step2):
+        for pos in self.list_redo[self.count][start:end]:
+            self.list_draw[pos].x += step1
+        self.list_draw[index].x += step2
+
+    def update_pos_arrow_number(self, index, list):
+        self.cor_cur = self.count
+        for z in list:
+            self.list_draw[index].x, self.list_draw[z].x = self.list_draw[z].x, self.list_draw[index].x
+            self.list_draw[index].text, self.list_draw[z].text = self.list_draw[z].text, self.list_draw[index].text
+        try:
+            self.list_arrow[0].posx = self.list_redo[self.count + 1][-1]
+            self.list_arrow[1].posx = self.list_redo[self.count + 1][-1]
+            self.list_arrow[0].update()
+            self.list_arrow[1].update()
+        except:
+            pass
+        self.wait = False
+
     def update_insert_bubble(self, dt):
         if self.cor_cur != self.count:
             self.wait = True
@@ -97,29 +120,14 @@ class gameWindow(pyglet.window.Window):
             temp = self.list_redo[self.count][0]
 
             if self.list_arrow[0].posx != temp:
-                self.list_arrow[0].posx -= 1
-                self.list_arrow[0].update()
-                sleep(0.5)
+                self.move_pos_arrow(-1)
 
             elif self.list_draw[index].x != 100*(temp+1):
-                for x in self.list_redo[self.count][:-1]:
-                    self.list_draw[x].x += 1
-                self.list_draw[index].x -= len(self.list_redo[self.count][:-1])
+                step2 = -len(self.list_redo[self.count][:-1])
+                self.move_number(0, -1, index, 1, step2)
 
             else:
-                self.cor_cur = self.count
-                for z in range(temp, index):
-                    self.list_draw[index].x, self.list_draw[z].x = self.list_draw[z].x, self.list_draw[index].x
-                    self.list_draw[index].text, self.list_draw[z].text = self.list_draw[z].text, self.list_draw[index].text
-
-                try:
-                    self.list_arrow[0].posx = self.list_redo[self.count + 1][-1]
-                    self.list_arrow[1].posx = self.list_redo[self.count + 1][-1]
-                    self.list_arrow[0].update()
-                    self.list_arrow[1].update()
-                except:
-                    pass
-                self.wait = False
+                self.update_pos_arrow_number(index, list(range(temp, index)))
 
     def update_quick(self, dt):
         if self.cor_cur != self.count:
@@ -128,36 +136,20 @@ class gameWindow(pyglet.window.Window):
             temp = self.list_redo[self.count][-2]
 
             if self.list_arrow[0].posx != temp:
-                self.list_arrow[0].posx += 1
-                self.list_arrow[0].update()
-                sleep(0.5)
+                self.move_pos_arrow(1)
 
             elif self.list_draw[index].x != 100*(temp+1):
-                for x in self.list_redo[self.count][-2:-1]:
-                    self.list_draw[x].x -= 5
-                self.list_draw[index].x += 5
+                self.move_number(-2, -1, index, -5, 5)
 
             else:
-                self.cor_cur = self.count
-                for z in [temp, index]:
-                    self.list_draw[index].x, self.list_draw[z].x = self.list_draw[z].x, self.list_draw[index].x
-                    self.list_draw[index].text, self.list_draw[z].text = self.list_draw[z].text, self.list_draw[index].text
-
-                try:
-                    self.list_arrow[0].posx = self.list_redo[self.count + 1][0]
-                    self.list_arrow[1].posx = self.list_redo[self.count + 1][-1]
-                    print(self.list_arrow[0].posx)
-                    print(self.list_arrow[1].posx)
-                    self.list_arrow[0].update()
-                    self.list_arrow[1].update()
-                except:
-                    pass
-                self.wait = False
-
+                self.update_pos_arrow_number(index, [temp, index])
 
     def update(self, dt):
         self.current.text = str(self.count)
-        self.update_quick(dt)
+        if self.algo.text == 'quick':
+            self.update_quick(dt)
+        else:
+            self.update_insert_bubble(dt)
 
 
 def main():

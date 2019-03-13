@@ -32,26 +32,27 @@ def insertSort(arr, file):
             file.write('\n')
 
 
+def partition(arr, left, right, file):
+    pivot = arr[right]
+    i = left
+    for j in range(left, right):
+        if arr[j] < pivot:
+            arr[i], arr[j] = arr[j], arr[i]
+            file.write(' '.join(str(v) for v in range(left, j+1)))
+            file.write(' {} {}\n'.format(i, right))
+            i += 1
+
+    arr[i],arr[right] = arr[right], arr[i]
+    file.write('{} {} {}\n'.format(right, i, right))
+    return i
+
 def quickSort(arr, left, right, file):
     if left < right:
-        i = (left -1)
-        pivot = arr[right]
-        for j in range(left, right):
-            if arr[j] <= pivot:
-                i += 1
-                if i == j:
-                    continue
-                arr[i], arr[j] = arr[j], arr[i]
-                file.write('{} {} {}\n'.format(i, j, right))
-
-
-        arr[i+1],arr[right] = arr[right], arr[i+1]
-        file.write('{} {} {}\n'.format(i+1, right, right))
-        pi = i+1
+        pivot = partition(arr, left, right, file)
         print('P:', pivot)
         print(*arr)
-        quickSort(arr, left, i, file)
-        quickSort(arr, i+2, right, file)
+        quickSort(arr, left, pivot-1, file)
+        quickSort(arr, pivot+1, right, file)
 
 
 def mergeSort(arr):

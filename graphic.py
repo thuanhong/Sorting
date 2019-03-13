@@ -17,8 +17,10 @@ def take_data(width):
         temp = []
         for y in line.rstrip().split(' '):
             temp.append(int(y))
-        list_redo.append(sorted(temp))
-
+        if name_algo != 'quick':
+            list_redo.append(sorted(temp))
+        else:
+            list_redo.append(temp)
     f.close()
     return list_redo, list_draw, name_algo
 
@@ -45,6 +47,8 @@ class gameWindow(pyglet.window.Window):
             self.arrow_pivot = pyglet.image.load('pivot.png')
             for x in self.list_redo:
                 self.list_pivot.append(x.pop())
+        self.list_pivot.insert(0, 9)
+
         self.cor_cur = 0
         self.list_redo.insert(0, self.cor_cur)
 
@@ -59,7 +63,7 @@ class gameWindow(pyglet.window.Window):
         self.algo = pyglet.text.Label(name, font_size = 30,x = 580,y = 600)
 
         self.arrow = pyglet.image.load('arrow.png')
-        self.list_arrow = [arrow(self.list_redo[1][-2], self.arrow),
+        self.list_arrow = [arrow(self.list_redo[1][0], self.arrow),
                           arrow(self.list_redo[1][-1], self.arrow)]
         back_tmp = pyglet.image.load('bg.jpg')
         self.back_ground = pyglet.sprite.Sprite(img=back_tmp)
@@ -75,6 +79,7 @@ class gameWindow(pyglet.window.Window):
                 x.Sprite.draw()
         if self.algo.text == 'quick':
             arrow(self.list_pivot[self.count], self.arrow_pivot).Sprite.draw()
+
 
         self.step.draw()
         self.current.draw()
@@ -106,8 +111,7 @@ class gameWindow(pyglet.window.Window):
                 for z in range(temp, index):
                     self.list_draw[index].x, self.list_draw[z].x = self.list_draw[z].x, self.list_draw[index].x
                     self.list_draw[index].text, self.list_draw[z].text = self.list_draw[z].text, self.list_draw[index].text
-                for x in self.list_draw:
-                    print(x.x)
+
                 try:
                     self.list_arrow[0].posx = self.list_redo[self.count + 1][-1]
                     self.list_arrow[1].posx = self.list_redo[self.count + 1][-1]
@@ -117,9 +121,43 @@ class gameWindow(pyglet.window.Window):
                     pass
                 self.wait = False
 
+    def update_quick(self, dt):
+        if self.cor_cur != self.count:
+            self.wait = True
+            index = self.list_redo[self.count][-1]
+            temp = self.list_redo[self.count][-2]
+
+            if self.list_arrow[0].posx != temp:
+                self.list_arrow[0].posx += 1
+                self.list_arrow[0].update()
+                sleep(0.5)
+
+            elif self.list_draw[index].x != 100*(temp+1):
+                for x in self.list_redo[self.count][-2:-1]:
+                    self.list_draw[x].x -= 5
+                self.list_draw[index].x += 5
+
+            else:
+                self.cor_cur = self.count
+                for z in [temp, index]:
+                    self.list_draw[index].x, self.list_draw[z].x = self.list_draw[z].x, self.list_draw[index].x
+                    self.list_draw[index].text, self.list_draw[z].text = self.list_draw[z].text, self.list_draw[index].text
+
+                try:
+                    self.list_arrow[0].posx = self.list_redo[self.count + 1][0]
+                    self.list_arrow[1].posx = self.list_redo[self.count + 1][-1]
+                    print(self.list_arrow[0].posx)
+                    print(self.list_arrow[1].posx)
+                    self.list_arrow[0].update()
+                    self.list_arrow[1].update()
+                except:
+                    pass
+                self.wait = False
+
+
     def update(self, dt):
         self.current.text = str(self.count)
-        self.update_insert_bubble(dt)
+        self.update_quick(dt)
 
 
 def main():

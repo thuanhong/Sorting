@@ -24,15 +24,21 @@ def take_data(width):
     f.close()
     return list_redo, list_draw, name_algo
 
+
+def swap(object_a, object_b):
+    object_a.x, object_b.x = object_b.x, object_a.x
+    object_a.text, object_b.text = object_b.text, object_a.text
+
+
 class arrow:
-    def __init__(self, posx, image):
+    def __init__(self, posx, image, posy = 400):
         self.Sprite = pyglet.sprite.Sprite(image)
         self.posx = posx
-        self.Sprite.x = 100*(self.posx+1) - 23
+        self.Sprite.x = 100*(self.posx+1) - 22
         self.Sprite.y = 400
 
     def update(self):
-        self.Sprite.x = 100*(self.posx+1) - 23
+        self.Sprite.x = 100*(self.posx+1) - 22
 
 
 class gameWindow(pyglet.window.Window):
@@ -46,7 +52,7 @@ class gameWindow(pyglet.window.Window):
             self.arrow_pivot = pyglet.image.load('pivot.png')
             for x in self.list_redo:
                 self.list_pivot.append(x.pop())
-            self.list_pivot.insert(0, 9)
+            self.list_pivot.insert(0, self.list_pivot[0])
 
         self.cor_cur = 0
         self.list_redo.insert(0, self.cor_cur)
@@ -91,7 +97,6 @@ class gameWindow(pyglet.window.Window):
 
     def move_pos_arrow(self, step):
         self.list_arrow[0].posx += step
-        self.list_arrow[0].update()
         sleep(0.5)
 
     def move_number(self, start, end, index, step1, step2):
@@ -102,13 +107,10 @@ class gameWindow(pyglet.window.Window):
     def update_pos_arrow_number(self, index, list):
         self.cor_cur = self.count
         for z in list:
-            self.list_draw[index].x, self.list_draw[z].x = self.list_draw[z].x, self.list_draw[index].x
-            self.list_draw[index].text, self.list_draw[z].text = self.list_draw[z].text, self.list_draw[index].text
+            swap(self.list_draw[index], self.list_draw[z])
         try:
             self.list_arrow[0].posx = self.list_redo[self.count + 1][-1]
             self.list_arrow[1].posx = self.list_redo[self.count + 1][-1]
-            self.list_arrow[0].update()
-            self.list_arrow[1].update()
         except:
             pass
         self.wait = False
@@ -150,6 +152,8 @@ class gameWindow(pyglet.window.Window):
             self.update_quick(dt)
         else:
             self.update_insert_bubble(dt)
+        self.list_arrow[0].update()
+        self.list_arrow[1].update()
 
 
 def main():

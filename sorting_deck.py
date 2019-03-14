@@ -54,38 +54,42 @@ def quickSort(arr, left, right, file):
         quickSort(arr, pivot+1, right, file)
 
 
-def mergeSort(arr):
-    if len(arr) > 1:
-        mid = len(arr)//2
-        left = arr[:mid]
-        right = arr[mid:]
+def merge(arr, start, mid, end, file):
+    start2 = mid + 1
 
-        mergeSort(left)
-        mergeSort(right)
+    if arr[mid] <= arr[start2]:
+        return
+    i = start
+    while start <= mid and start2 <= end:
+        if arr[start] <= arr[start2]:
+            start += 1
+        else:
+            value = arr[start2]
+            index = start2
 
-        i = j = k = 0
-        while i < len(left) and j < len(right):
-            if left[i] < right[j]:
-                arr[k] = left[i]
-                i = i+1
-            else:
-                arr[k] = right[j]
-                j = j+1
-            k = k+1
+            while index != start:
+                file.write(str(index) + ' ')
+                arr[index] = arr[index - 1]
+                index -= 1
+            arr[start] = value
+            file.write(str(start) + ' ')
+            file.write('\n')
 
-        while i < len(left):
-            arr[k] = left[i]
-            i = i+1
-            k = k+1
+            start += 1
+            mid += 1
+            start2 += 1
+    print(*arr[i:end])
 
-        while j < len(right):
-            arr[k] = right[j]
-            j = j+1
-            k = k+1
-        print(*arr)
+def mergeSort(arr, l, r, file):
+    if l < r:
+        m = int((l+r) / 2)
+
+        mergeSort(arr, l, m, file)
+        mergeSort(arr, m + 1, r, file)
+        merge(arr, l, m, r, file)
 
 
-def main(algor, arr, file):
+def handle_algor(algor, arr, file):
     if algor.isdigit():
         file.write('bubble' + '\n')
     else:
@@ -96,7 +100,7 @@ def main(algor, arr, file):
     elif algor == 'quick':
         quickSort(arr, 0, len(arr) - 1, file)
     elif algor == 'merge':
-        mergeSort(arr)
+        mergeSort(arr, 0, len(arr) -1, file)
     else:
         bubbleSort(arr, file)
 
@@ -119,7 +123,7 @@ if __name__ == '__main__':
     f = open('data', 'w')
 
     if args.algo:
-        main(args.algo, args.N, f)
+        handle_algor(args.algo, args.N, f)
     else:
         f.write('bubble' + '\n')
         f.write(' '.join(str(v) for v in args.N) + '\n')

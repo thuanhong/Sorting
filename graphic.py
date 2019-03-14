@@ -10,7 +10,7 @@ def take_data(width):
     list_draw = []
     name_algo = list_data[0]
     for index, number in enumerate(list_data[1].split(' ')):
-        list_draw.append(pyglet.text.Label(number, font_size = 20, x=100*(index+1), y=360))
+        list_draw.append(pyglet.text.Label(number, font_size = 20, x=80*(index+1), y=360))
 
     list_redo = []
     for line in list_data[2:]:
@@ -34,11 +34,11 @@ class arrow:
     def __init__(self, posx, image, posy = 400):
         self.Sprite = pyglet.sprite.Sprite(image)
         self.posx = posx
-        self.Sprite.x = 100*(self.posx+1) - 22
+        self.Sprite.x = 80*(self.posx+1) - 22
         self.Sprite.y = 400
 
     def update(self):
-        self.Sprite.x = 100*(self.posx+1) - 22
+        self.Sprite.x = 80*(self.posx+1) - 22
 
 
 class gameWindow(pyglet.window.Window):
@@ -63,7 +63,7 @@ class gameWindow(pyglet.window.Window):
         self.sorted = pyglet.text.Label('List have been sorted',
                                         font_size = 40,x = 300,y = 200)
         self.step = pyglet.text.Label('Step :' + '    /' + str(len(self.list_redo) - 1),
-                                        font_size = 30,x = 1000,y = 600)
+                                        font_size = 30,x = 800,y = 600)
         self.current = pyglet.text.Label('1', font_size = 30,x = 1120,y = 600)
         self.algo = pyglet.text.Label(name, font_size = 30,x = 580,y = 600)
 
@@ -124,7 +124,7 @@ class gameWindow(pyglet.window.Window):
             if self.list_arrow[0].posx != temp:
                 self.move_pos_arrow(-1)
 
-            elif self.list_draw[index].x != 100*(temp+1):
+            elif self.list_draw[index].x != 80*(temp+1):
                 step2 = -len(self.list_redo[self.count][:-1])
                 self.move_number(0, -1, index, 1, step2)
 
@@ -140,7 +140,7 @@ class gameWindow(pyglet.window.Window):
             if self.list_arrow[0].posx != temp:
                 self.move_pos_arrow(1)
 
-            elif self.list_draw[index].x != 100*(temp+1):
+            elif self.list_draw[index].x != 80*(temp+1):
                 self.move_number(-2, -1, index, -5, 5)
 
             else:

@@ -31,8 +31,4 @@
 # list = [7,5,7,54,68,5,7,9,2,53,7]
 # mergeSort(list, 0, len(list)-1)
 # print(list)
-
-
-
-for x in range(10, 0, -1):
-    print(x)
+def update(self, index_left, move, start, move, move2, list)

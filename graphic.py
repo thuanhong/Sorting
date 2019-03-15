@@ -130,26 +130,25 @@ class gameWindow(pyglet.window.Window):
 
             else:
                 self.update_pos_arrow_number(index, list(range(temp, index)))
-
-    def update_quick(self, dt):
+    def update_quick(self, dt, index_left, move, move1, move2, list):
         if self.cor_cur != self.count:
             self.wait = True
             index = self.list_redo[self.count][-1]
-            temp = self.list_redo[self.count][-2]
+            temp = self.list_redo[self.count][index_left]
 
             if self.list_arrow[0].posx != temp:
-                self.move_pos_arrow(1)
+                self.move_pos_arrow(move)
 
             elif self.list_draw[index].x != 80*(temp+1):
-                self.move_number(-2, -1, index, -5, 5)
+                self.move_number(index_left, -1, index, move1, move2)
 
             else:
-                self.update_pos_arrow_number(index, [temp, index])
+                self.update_pos_arrow_number(index, list)
 
     def update(self, dt):
         self.current.text = str(self.count)
         if self.algo.text == 'quick':
-            self.update_quick(dt)
+            self.update_quick(dt, -2, 1, -5, 5, [temp, index])
         else:
             self.update_insert_bubble(dt)
         self.list_arrow[0].update()

@@ -10,7 +10,8 @@ def take_data(width):
     list_draw = []
     name_algo = list_data[0]
     for index, number in enumerate(list_data[1].split(' ')):
-        list_draw.append(pyglet.text.Label(number, font_size = 20, x=80*(index+1), y=360))
+        list_draw.append(pyglet.text.Label(number, font_size=20,
+                                           x=80*(index+1), y=360))
 
     list_redo = []
     for line in list_data[2:]:
@@ -31,7 +32,7 @@ def swap(object_a, object_b):
 
 
 class arrow:
-    def __init__(self, posx, image, posy = 400):
+    def __init__(self, posx, image):
         self.Sprite = pyglet.sprite.Sprite(image)
         self.posx = posx
         self.Sprite.x = 80*(self.posx+1) - 22
@@ -56,20 +57,19 @@ class gameWindow(pyglet.window.Window):
 
         self.cor_cur = 0
         self.list_redo.insert(0, self.cor_cur)
-        print(self.list_redo)
         self.count = 0
         self.wait = False
-
         self.sorted = pyglet.text.Label('List have been sorted',
-                                        font_size = 40,x = 300,y = 200)
-        self.step = pyglet.text.Label('Step :' + '    /' + str(len(self.list_redo) - 1),
-                                        font_size = 30,x =1000,y = 600)
-        self.current = pyglet.text.Label('1', font_size = 30,x = 1120,y = 600)
-        self.algo = pyglet.text.Label(name, font_size = 30,x = 580,y = 600)
+                                        font_size=40, x=300, y=200)
+        self.step = pyglet.text.Label('Step :' + '    /' +
+                                      str(len(self.list_redo) - 1),
+                                      font_size=30, x=1000, y=600)
+        self.current = pyglet.text.Label('1', font_size=30, x=1120, y=600)
+        self.algo = pyglet.text.Label(name, font_size=30, x=580, y=600)
 
         self.arrow = pyglet.image.load('arrow.png')
         self.list_arrow = [arrow(self.list_redo[1][0], self.arrow),
-                          arrow(self.list_redo[1][-1], self.arrow)]
+                           arrow(self.list_redo[1][-1], self.arrow)]
         back_tmp = pyglet.image.load('bg.jpg')
         self.back_ground = pyglet.sprite.Sprite(img=back_tmp)
 
@@ -85,52 +85,42 @@ class gameWindow(pyglet.window.Window):
         if self.algo.text == 'quick':
             arrow(self.list_pivot[self.count], self.arrow_pivot).Sprite.draw()
 
-
         self.step.draw()
         self.current.draw()
         if self.count == self.cor_cur == len(self.list_redo) - 1:
             self.sorted.draw()
 
     def on_mouse_press(self, x, y, button, modifiers):
-        if button == mouse.LEFT and self.count < len(self.list_redo) - 1 and not self.wait:
+        if button == mouse.LEFT and self.count < len(self.list_redo) - 1\
+           and not self.wait:
             self.count += 1
 
     def move_pos_arrow(self, step):
         self.list_arrow[0].posx += step
         sleep(0.5)
 
-    def move_number(self, start, end, index, step1, step2):
+    def move_number(self, start, end, index, step1):
         for pos in self.list_redo[self.count][start:end]:
             self.list_draw[pos].x += step1
+        step2 = step1 * -len(self.list_redo[self.count][start:end])
         self.list_draw[index].x += step2
 
-    def update_pos_arrow_number(self, index, list):
+    def update_pos_arrow_number(self, temp, index):
         self.cor_cur = self.count
-        for z in list:
+        if self.algo.text == 'quick':
+            list_update = [temp, index]
+        else:
+            list_update = list(range(temp, index))
+        for z in list_update:
             swap(self.list_draw[index], self.list_draw[z])
         try:
             self.list_arrow[0].posx = self.list_redo[self.count + 1][-1]
             self.list_arrow[1].posx = self.list_redo[self.count + 1][-1]
-        except:
+        except IndexError:
             pass
         self.wait = False
 
-    def update_insert_bubble(self, dt):
-        if self.cor_cur != self.count:
-            self.wait = True
-            index = self.list_redo[self.count][-1]
-            temp = self.list_redo[self.count][0]
-
-            if self.list_arrow[0].posx != temp:
-                self.move_pos_arrow(-1)
-
-            elif self.list_draw[index].x != 80*(temp+1):
-                step2 = -len(self.list_redo[self.count][:-1])
-                self.move_number(0, -1, index, 1, step2)
-
-            else:
-                self.update_pos_arrow_number(index, list(range(temp, index)))
-    def update_quick(self, dt, index_left, move, move1, move2, list):
+    def update_quick(self, dt, index_left, move, move1):
         if self.cor_cur != self.count:
             self.wait = True
             index = self.list_redo[self.count][-1]
@@ -140,17 +130,17 @@ class gameWindow(pyglet.window.Window):
                 self.move_pos_arrow(move)
 
             elif self.list_draw[index].x != 80*(temp+1):
-                self.move_number(index_left, -1, index, move1, move2)
+                self.move_number(index_left, -1, index, move1)
 
             else:
-                self.update_pos_arrow_number(index, list)
+                self.update_pos_arrow_number(temp, index)
 
     def update(self, dt):
         self.current.text = str(self.count)
         if self.algo.text == 'quick':
-            self.update_quick(dt, -2, 1, -5, 5, [temp, index])
+            self.update_quick(dt, -2, 1, -5)
         else:
-            self.update_insert_bubble(dt)
+            self.update_quick(dt, 0, -1, 1)
         self.list_arrow[0].update()
         self.list_arrow[1].update()
 
@@ -159,6 +149,7 @@ def main():
     game = gameWindow(1280, 720, 'Simulator Sort')
     pyglet.clock.schedule_interval(game.update, game.frame_rate)
     pyglet.app.run()
+
 
 if __name__ == '__main__':
     main()

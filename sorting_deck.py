@@ -41,9 +41,10 @@ def partition(arr, left, right, file):
             file.write(' {} {}\n'.format(i, right))
             i += 1
 
-    arr[i],arr[right] = arr[right], arr[i]
+    arr[i], arr[right] = arr[right], arr[i]
     file.write('{} {} {}\n'.format(right, i, right))
     return i
+
 
 def quickSort(arr, left, right, file):
     if left < right:
@@ -80,6 +81,7 @@ def merge(arr, start, mid, end, file):
             start2 += 1
     print(*arr[i:end])
 
+
 def mergeSort(arr, l, r, file):
     if l < r:
         m = int((l+r) / 2)
@@ -100,7 +102,7 @@ def handle_algor(algor, arr, file):
     elif algor == 'quick':
         quickSort(arr, 0, len(arr) - 1, file)
     elif algor == 'merge':
-        mergeSort(arr, 0, len(arr) -1, file)
+        mergeSort(arr, 0, len(arr) - 1, file)
     else:
         bubbleSort(arr, file)
 

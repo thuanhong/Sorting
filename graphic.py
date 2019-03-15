@@ -56,14 +56,14 @@ class gameWindow(pyglet.window.Window):
 
         self.cor_cur = 0
         self.list_redo.insert(0, self.cor_cur)
-
+        print(self.list_redo)
         self.count = 0
         self.wait = False
 
         self.sorted = pyglet.text.Label('List have been sorted',
                                         font_size = 40,x = 300,y = 200)
         self.step = pyglet.text.Label('Step :' + '    /' + str(len(self.list_redo) - 1),
-                                        font_size = 30,x = 800,y = 600)
+                                        font_size = 30,x =1000,y = 600)
         self.current = pyglet.text.Label('1', font_size = 30,x = 1120,y = 600)
         self.algo = pyglet.text.Label(name, font_size = 30,x = 580,y = 600)
 

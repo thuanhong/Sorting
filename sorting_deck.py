@@ -4,6 +4,12 @@ import argparse
 
 
 def bubbleSort(arr, file):
+    """
+    sort list by bubble sort algorithm
+    @param : arr The array need sort
+    @param : file use to write processing steps to handle in GUI
+    @return None
+    """
     for x in range(len(arr)-1, -1, -1):
         for y in range(x):
             if arr[y+1] < arr[y]:
@@ -13,12 +19,19 @@ def bubbleSort(arr, file):
 
 
 def insertSort(arr, file):
+    """
+    sort list by insert sort algorithm
+    @param : arr The array need sort
+    @param : file use to write processing steps to handle in GUI
+    @return None
+    """
     for i in range(1, len(arr)):
         temp = arr[i]
         j = i - 1
         swapped = False
         if temp < arr[j]:
             file.write(str(i) + ' ')
+
         while j >= 0 and temp < arr[j]:
             file.write(str(j) + ' ')
             arr[j+1] = arr[j]
@@ -32,6 +45,14 @@ def insertSort(arr, file):
 
 
 def partition(arr, left, right, file):
+    """
+    sort list by bubble sort algorithm
+    @param : arr The array need sort
+    @param : left Index start
+    @param : right Index right
+    @param : file use to write processing steps to handle in GUI
+    @return new pivot (i)
+    """
     pivot = arr[right]
     i = left
     for j in range(left, right):
@@ -47,15 +68,29 @@ def partition(arr, left, right, file):
 
 
 def quickSort(arr, left, right, file):
+    """
+    sort list from left to right
+    @param : arr The array need sort
+    @param : left Index start
+    @param : right Index right
+    @param : file Use to write processing steps to handle in GUI
+    @return None
+    """
     if left < right:
         pivot = partition(arr, left, right, file)
-        print('P:', pivot)
+        print('P:', arr[pivot])
         print(*arr)
         quickSort(arr, left, pivot-1, file)
         quickSort(arr, pivot+1, right, file)
 
 
 def merge(arr, start, mid, end, file):
+    """
+    sort list by bubble sort algorithm
+    @param : arr The array need sort
+    @param : file use to write processing steps to handle in GUI
+    @return None
+    """
     start2 = mid + 1
 
     if arr[mid] <= arr[start2]:
@@ -79,24 +114,53 @@ def merge(arr, start, mid, end, file):
             start += 1
             mid += 1
             start2 += 1
-    print(*arr[i:end])
 
 
-def mergeSort(arr, l, r, file):
-    if l < r:
-        m = int((l+r) / 2)
+def mergeSort(arr, left, right, file):
+    """
+    sort list by merge sort algorithm
+    @param : arr The array need sort
+    @param : file use to write processing steps to handle in GUI
+    @return None
+    """
+    if left < right:
+        mid = int((left+right-1) / 2)
 
-        mergeSort(arr, l, m, file)
-        mergeSort(arr, m + 1, r, file)
-        merge(arr, l, m, r, file)
+        mergeSort(arr, left, mid, file)
+        mergeSort(arr, mid + 1, right, file)
+        merge(arr, left, mid, right, file)
+        print(*arr[left:right+1])
 
 
-def handle_algor(algor, arr, file):
+def write_data(algor, arr, file):
+    """
+    write name of algorithm and content of array to file data
+    to handle gui (if possible)
+    @param : algor The name of algorithm be use
+    @param : arr The array need sort
+    @param : file use to write processing steps to handle in GUI
+    @return None
+    """
     if algor.isdigit():
         file.write('bubble' + '\n')
     else:
         file.write(algor + '\n')
     file.write(' '.join(str(v) for v in arr) + '\n')
+
+
+def handle_algor(algor, arr, file, gui):
+    """
+    sort list by bubble sort algorithm
+    @param : algor The name of algorithm be use
+    @param : arr The array need sort
+    @param : file use to write processing steps to handle in GUI
+    @param : option GUI (true/false)
+    @return None
+    """
+    if gui:
+        write_data(algor, arr, file)
+
+    # run algorithm follow option
     if algor == 'insert':
         insertSort(arr, file)
     elif algor == 'quick':
@@ -108,6 +172,11 @@ def handle_algor(algor, arr, file):
 
 
 def take_arugment():
+    """
+    take option from input
+    @param : None
+    @return a list contain all option
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('--algo', type=str,
                         help='specify which algorithm to use for sorting among\
@@ -125,7 +194,7 @@ if __name__ == '__main__':
     f = open('data', 'w')
 
     if args.algo:
-        handle_algor(args.algo, args.N, f)
+        handle_algor(args.algo, args.N, f, args.gui)
     else:
         f.write('bubble' + '\n')
         f.write(' '.join(str(v) for v in args.N) + '\n')
